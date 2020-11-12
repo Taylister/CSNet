@@ -20,8 +20,12 @@ mkdir -p "fonts/english_ttf/"
 mkdir "bg_data"
 
 
-#echo "Downloading background image names ($(date))"
-#wget http://www.robots.ox.ac.uk/~vgg/data/scenetext/preproc/imnames.cp 
+if [ -f imnames.cp ]; then
+  echo "ファイルが存在します"
+else
+  echo "Downloading background image names ($(date))"
+  wget http://www.robots.ox.ac.uk/~vgg/data/scenetext/preproc/imnames.cp 
+fi
 
 #echo "----------"
 #echo "Downloading background images ($(date))"
