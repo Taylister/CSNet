@@ -27,13 +27,13 @@ class CopyFont():
         '''
         self.font_paths = list()
         for ext in FONT_EXTS:
-            if self.is_recursive:
-                tmp = glob(self.src_font_dir_path + '/**/*.' + ext, recursive=True)
-            else:
-                tmp = glob(self.src_font_dir_path + '/*.' + ext)
+            #if self.is_recursive:
+            tmp = glob(self.src_font_dir_path + '/**/*.' + ext, recursive=True)
+            # else:
+            #     tmp = glob(self.src_font_dir_path + '/*.' + ext)
             self.font_paths.extend(tmp)
 
-    def run():
+    def run(self):
         '''
         フォントファイルをコピーする
         '''
@@ -42,7 +42,7 @@ class CopyFont():
             pbar_font_paths.set_description('{: <30}'.format(os.path.basename(font_path)))
             font_name = os.path.basename(os.path.splitext(font_path)[0])
             if os.path.exists(font_path):
-                shutil.copy(font_path, dst_dirpath)
+                shutil.copy(font_path, self.dst_dir_path)
         
 
 
