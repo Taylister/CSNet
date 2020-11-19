@@ -32,6 +32,7 @@ class datagen():
         cur_file_path = os.path.dirname(__file__)
         
         font_dir = os.path.join(cur_file_path, data_cfg.font_dir)
+        #self.font_list = pygame.font.get_fonts()
         self.font_list = os.listdir(font_dir)
         self.font_list = [os.path.join(font_dir, font_name) for font_name in self.font_list]
         self.standard_font_path = os.path.join(cur_file_path, data_cfg.standard_font_path)
@@ -44,6 +45,8 @@ class datagen():
         self.text_list = [text.strip() for text in self.text_list]
         
         bg_filepath = os.path.join(cur_file_path, data_cfg.bg_filepath)
+
+     
 
         with open(bg_filepath, 'rb') as f:
 	        self.bg_list = set(cp.load(f))
@@ -78,6 +81,7 @@ class datagen():
 
             # init font
             font = freetype.Font(font)
+            #font = pygame.font.Font(font)
             font.antialiased = True
             font.origin = True
 

@@ -11,28 +11,32 @@ echo "This is $main_dir"
 
 cd "$main_dir"
 
-mkdir "datasets/"
+mkdir -p "datasets/"
 cd "datasets"
 
-mkdir "srnet_data/"
+mkdir -p "csnet_data/"
 mkdir -p "fonts/english_ttf/"
 
-mkdir "bg_data"
+mkdir -p "bg_data"
 
 
 if [ -f imnames.cp ]; then
-  echo "ファイルが存在します"
+  :
 else
   echo "Downloading background image names ($(date))"
   wget http://www.robots.ox.ac.uk/~vgg/data/scenetext/preproc/imnames.cp 
 fi
 
-#echo "----------"
-#echo "Downloading background images ($(date))"
+echo "----------"
 
-#cd "bg_data"
-#wget http://www.robots.ox.ac.uk/~vgg/data/scenetext/preproc/bg_img.tar.gz
-#tar -xzf bg_img.tar.gz
+if [ -e ./bg_data/bg_img.tar.gz ]; then
+  :
+else
+  echo "Downloading background images ($(date))"
+  cd "bg_data"
+  wget http://www.robots.ox.ac.uk/~vgg/data/scenetext/preproc/bg_img.tar.gz
+  tar -xzf bg_img.tar.gz
+fi
 
 echo "Changing Paths $(date)"
 
@@ -41,7 +45,7 @@ code_path="${main_dir}SRNet-Datagen/"
 
 cd "${code_path}"
 
-sed -i "s|^data_dir.*$|data_dir = '${copy_path}srnet_data/'|" cfg.py
+sed -i "s|^data_dir.*$|data_dir = '${copy_path}csnet_data/'|" cfg.py
 
 cd "Synthtext"
 
@@ -56,8 +60,8 @@ sed -i "s|^temp_bg_path.*$|temp_bg_path = '${copy_path}bg_data/bg_img/'|" data_c
 echo "Moving fonts ($(date))"
 
 cd ${main_dir}datasets/fonts/english_ttf
-mv ${code_path}arial.ttf ./
-mv ${code_path}OpenSans-Regular.ttf ./
+cp ${code_path}arial.ttf ./
+cp ${code_path}OpenSans-Regular.ttf ./
 
 cd "${code_path}"
 

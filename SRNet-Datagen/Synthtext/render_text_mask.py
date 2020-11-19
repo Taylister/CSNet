@@ -82,7 +82,7 @@ def render_normal(font, text):
     bbs = np.array(bbs)
     surf_arr, bbs = crop_safe(pygame.surfarray.pixels_alpha(surf), rect_union, bbs, pad=5)
     surf_arr = surf_arr.swapaxes(0,1)
-    
+  
     #self.visualize_bb(surf_arr,bbs)
     return surf_arr, bbs
 

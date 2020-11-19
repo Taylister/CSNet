@@ -293,7 +293,7 @@ class Colorize(object):
         l_bg = Layer(alpha = 255 * np.ones_like(text_arr, dtype = np.uint8), color = bg_arr)
 
         # image blit
-        l_out = poisson_reconstruct.poisson_blit_images(l_normal.color.copy(), l_bg.color.copy())
+        l_out = poisson_reconstruct.poisson_blit_images(l_normal.color.copy(), l_bg.color.copy(),mode="blend")
 
         return l_normal_gray.color, l_out
 

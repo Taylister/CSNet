@@ -9,11 +9,11 @@ def makedirs(path):
 
 def main():
     
-    i_t_dir = os.path.join(cfg.data_dir, cfg.i_t_dir)
-    i_s_dir = os.path.join(cfg.data_dir, cfg.i_s_dir)
-    t_sk_dir = os.path.join(cfg.data_dir, cfg.t_sk_dir)
+    #i_t_dir = os.path.join(cfg.data_dir, cfg.i_t_dir)
+    #i_s_dir = os.path.join(cfg.data_dir, cfg.i_s_dir)
+    #t_sk_dir = os.path.join(cfg.data_dir, cfg.t_sk_dir)
     t_t_dir = os.path.join(cfg.data_dir, cfg.t_t_dir)
-    t_b_dir = os.path.join(cfg.data_dir, cfg.t_b_dir)
+    #t_b_dir = os.path.join(cfg.data_dir, cfg.t_b_dir)
     t_f_dir = os.path.join(cfg.data_dir, cfg.t_f_dir)
     mask_t_dir = os.path.join(cfg.data_dir, cfg.mask_t_dir)
     
@@ -31,11 +31,11 @@ def main():
     for idx in range(cfg.sample_num):
         print ("Generating step {:>6d} / {:>6d}".format(idx + 1, cfg.sample_num))
         i_t, i_s, t_sk, t_t, t_b, t_f, mask_t = mp_gen.dequeue_data()
-        i_t_path = os.path.join(i_t_dir, str(idx).zfill(digit_num) + '.png')
-        i_s_path = os.path.join(i_s_dir, str(idx).zfill(digit_num) + '.png')
-        t_sk_path = os.path.join(t_sk_dir, str(idx).zfill(digit_num) + '.png')
+        # i_t_path = os.path.join(i_t_dir, str(idx).zfill(digit_num) + '.png')
+        # i_s_path = os.path.join(i_s_dir, str(idx).zfill(digit_num) + '.png')
+        # t_sk_path = os.path.join(t_sk_dir, str(idx).zfill(digit_num) + '.png')
         t_t_path = os.path.join(t_t_dir, str(idx).zfill(digit_num) + '.png')
-        t_b_path = os.path.join(t_b_dir, str(idx).zfill(digit_num) + '.png')
+        #t_b_path = os.path.join(t_b_dir, str(idx).zfill(digit_num) + '.png')
         t_f_path = os.path.join(t_f_dir, str(idx).zfill(digit_num) + '.png')
         mask_t_path = os.path.join(cfg.data_dir, cfg.mask_t_dir, str(idx).zfill(digit_num) + '.png')
         #cv2.imwrite(i_t_path, i_t, [int(cv2.IMWRITE_PNG_COMPRESSION), 0])

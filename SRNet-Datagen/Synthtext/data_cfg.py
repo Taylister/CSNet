@@ -7,12 +7,12 @@ Written by Yu Qian
 import numpy as np
 
 # font
-font_size = [25, 60]
+font_size = [30, 60]
 underline_rate = 0.01
-strong_rate = 0.07
+strong_rate = 0.7
 oblique_rate = 0.02
-font_dir = '/home/miyazonotaiga/デスクトップ/MyResearch/SRNet/datasets/fonts/english_ttf/'
-standard_font_path = '/home/miyazonotaiga/デスクトップ/MyResearch/SRNet/datasets/fonts/english_ttf/arial.ttf'
+font_dir = '/home/miyazonotaiga/デスクトップ/MyResearch/CSNet/datasets/fonts/english_ttf/'
+standard_font_path = '/home/miyazonotaiga/デスクトップ/MyResearch/CSNet/datasets/fonts/english_ttf/arial.ttf'
 
 input_text_source_filepath = 'data/input_text_source'
 
@@ -22,19 +22,19 @@ capitalize_rate = 0.1
 uppercase_rate = 0.04
 
 # background
-bg_filepath = '/home/miyazonotaiga/デスクトップ/MyResearch/SRNet/datasets/imnames.cp'
-temp_bg_path = '/home/miyazonotaiga/デスクトップ/MyResearch/SRNet/datasets/bg_data/bg_img/'
+bg_filepath = '/home/miyazonotaiga/デスクトップ/MyResearch/CSNet/datasets/imnames.cp'
+temp_bg_path = '/home/miyazonotaiga/デスクトップ/MyResearch/CSNet/datasets/bg_data/bg_img/'
 
 ## background augment
-brightness_rate = 0.8
-brightness_min = 0.7
-brightness_max = 1.5
+brightness_rate = 0.4
+brightness_min = 0.3
+brightness_max =1.0
 color_rate = 0.8
 color_min =0.7
 color_max = 1.3
-contrast_rate = 0.8
-contrast_min = 0.7
-contrast_max = 1.3
+contrast_rate = 0.3
+contrast_min = 0.2
+contrast_max = 0.4
 
 # curve
 is_curve_rate = 0.05
