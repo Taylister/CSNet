@@ -12,10 +12,10 @@ from tqdm import tqdm
 import torchvision.transforms.functional as F
 from skimage.transform import resize
 from skimage import io
-from model import Generator, Discriminator, Vgg19
+from models import define_G, define_D, GANLoss, get_scheduler, update_learning_rate
 from torchvision import models, transforms, datasets
-from loss import build_generator_loss, build_discriminator_loss
-from datagen import datagen_srnet, example_dataset, To_tensor
+from dataset import CSNet_dataset, Example_dataset, To_tensor
+import torch.optim as optim
 from torch.utils.data import Dataset, DataLoader
 
 
@@ -51,21 +51,21 @@ def main():
 
 
     print('===> Building models')
-    net_g = define_G(input_nc = 3, output_nc = 1, ngf=64, 'batch', False, 'normal', 0.02, gpu_id=device)
-    net_d = define_D(input_nc = 3 + 1, ndf=64, 'basic', gpu_id=device)
+    net_g = define_G(3, 1, 64,'batch', False, 'normal', 0.02, gpu_id=gpu)
+    net_d = define_D(3 + 1, 64, 'basic', gpu_id=gpu)
 
     criterionGAN = GANLoss().to(gpu)
     criterionL1 = nn.L1Loss().to(gpu)
     criterionMSE = nn.MSELoss().to(gpu)
 
     # setup optimizer
-    optimizer_g = optim.Adam(net_g.parameters(), lr=opt.lr, betas=(opt.beta1, 0.999))
-    optimizer_d = optim.Adam(net_d.parameters(), lr=opt.lr, betas=(opt.beta1, 0.999))
+    optimizer_g = optim.Adam(net_g.parameters(), lr=cfg.lr, betas=(opt.beta1, 0.999))
+    optimizer_d = optim.Adam(net_d.parameters(), lr=cfg.lr, betas=(opt.beta1, 0.999))
     net_g_scheduler = get_scheduler(optimizer_g, opt)
     net_d_scheduler = get_scheduler(optimizer_d, opt)
 
     # train
-    trainiter = iter(train_data)
+    trainer = iter(train_data)
     #example_iter = iter(example_loader)
 
     for epoch in range(1, cfg.niter + cfg.niter_decay + 1):
@@ -145,3 +145,6 @@ def main():
         #     torch.save(net_g, net_g_model_out_path)
         #     torch.save(net_d, net_d_model_out_path)
         #     print("Checkpoint saved to {}".format("checkpoint" + opt.dataset))
+
+if __name__ == '__main__':
+    main()
