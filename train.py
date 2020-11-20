@@ -129,14 +129,18 @@ def main():
 
             optimizer_g.step()
 
-            print("===> Epoch[{}]({}/{}): Loss_D: {:.4f} Loss_G: {:.4f}".format(
-                epoch, iteration, len(trainer), loss_d.item(), loss_g.item()))
-            
+            ######################
+            # Output Log 
+            ######################
+            if iteration % cfg.write_log_interval == 0 or iteration == 0:
+                print("===> Epoch[{}]({}/{}): Loss_D: {:.4f} Loss_G: {:.4f}".format(
+                    epoch, iteration, len(trainer), loss_d.item(), loss_g.item()))
+                
             ######################
             # Save Image 
             ######################
             if iteration % cfg.snap_period == 0 or iteration == 0:
-                print(iteration)
+
                 savedir = os.path.join(cfg.train_result_dir, train_name, "images", str(epoch)+'-'+str(iteration))
             
                 example_iter = iter(example_loader)
@@ -155,7 +159,7 @@ def main():
                         os.makedirs(savedir)
 
                     o_mask = F.to_pil_image(o_mask)
-                    o_mask.save(os.path.join(savedir, name + 'o_mask.png'))
+                    o_mask.save(os.path.join(savedir, name + '.png'))
             
             ######################
             # Save Weight 

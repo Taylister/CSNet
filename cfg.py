@@ -4,9 +4,9 @@ lamb = 10
 #parser.add_argument('--lamb', type=int, default=10, help='weight on L1 term in objective')
 epoch_count = 1
 # parser.add_argument('--epoch_count', type=int, default=1, help='the starting epoch count')
-niter = 1000
+niter = 100
 # parser.add_argument('--niter', type=int, default=100, help='# of iter at starting learning rate')
-niter_decay = 1000
+niter_decay = 100
 # parser.add_argument('--niter_decay', type=int, default=100, help='# of iter to linearly decay learning rate to zero')
 lr = 0.0002
 # parser.add_argument('--lr', type=float, default=0.0002, help='initial learning rate for adam')
@@ -16,13 +16,14 @@ lr_decay_iters = 50
 # parser.add_argument('--lr_decay_iters', type=int, default=50, help='multiply by a gamma every lr_decay_iters iterations')
 beta1 = 0.5
 # parser.add_argument('--beta1', type=float, default=0.5, help='beta1 for adam. default=0.5')
-snap_period = 10000
-save_ckpt_interval = 20000
+snap_period = 2500
+save_ckpt_interval = 5000
+write_log_interval = 100
 
 # data
 batch_size = 8
 data_shape = [64, None]
-data_dir = 'datasets/sample'
+data_dir = 'datasets/csnet_data'
 
 train_data_dir = 'train'
 test_data_dir = 'test'
