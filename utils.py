@@ -3,15 +3,13 @@ import numpy as np
 import os
 import torch
 import torchvision.transforms
-from utils import *
 import cfg
 from tqdm import tqdm
-import torchvision.transforms.functional as F
+from datetime import datetime
 from skimage.transform import resize
 from skimage import io
 
 def custom_collate(batch):
-    
     i_s_batch, mask_t_batch = [], []
     
     w_sum = 0
@@ -19,7 +17,7 @@ def custom_collate(batch):
     for item in batch:
 
         i_s= item[0]
-        h, w = t_b.shape[:2]
+        h, w = i_s.shape[:2]
         scale_ratio = cfg.data_shape[0] / h
         w_sum += int(w * scale_ratio)
         
@@ -35,7 +33,6 @@ def custom_collate(batch):
         i_s = resize(i_s, to_scale, preserve_range=True)
         mask_t = np.expand_dims(resize(mask_t, to_scale, preserve_range=True), axis = -1)
 
-
         i_s = i_s.transpose((2, 0, 1))
         mask_t = mask_t.transpose((2, 0, 1)) 
 
@@ -48,7 +45,6 @@ def custom_collate(batch):
     i_s_batch = torch.from_numpy(i_s_batch.astype(np.float32) / 127.5 - 1.) 
     mask_t_batch =torch.from_numpy(mask_t_batch.astype(np.float32) / 255.)    
 
-      
     return [i_s_batch, mask_t_batch]
 
 def get_train_name():

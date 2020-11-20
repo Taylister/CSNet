@@ -40,28 +40,28 @@ class CSNet_dataset(Dataset):
             i_s = io.imread(os.path.join(cfg.data_dir, cfg.train_data_dir, cfg.i_s_dir, img_name))
             mask_t = io.imread(os.path.join(cfg.data_dir, cfg.train_data_dir, cfg.mask_t_dir, img_name), as_gray = True)
             
-        elif(torp == 'test'):
+        elif(self.torp == 'test'):
         
             img_name = self.name_list[idx]
             
             i_s = io.imread(os.path.join(cfg.data_dir, cfg.test_data_dir, cfg.i_s_dir, img_name))
             mask_t = io.imread(os.path.join(cfg.data_dir, cfg.test_data_dir, cfg.mask_t_dir, img_name), as_gray = True)
         
-        return [i_t, mask_t]
+        return [i_s, mask_t]
         
 
 class Example_dataset(Dataset):
     
     def __init__(self, data_dir = cfg.example_data_dir, transform = None):
         
-        self.name_list = os.listdir(os.path.join(data_dir, self.i_s_dir))
+        self.name_list = os.listdir(os.path.join(data_dir, cfg.i_s_dir))
         # self.files = os.listdir(data_dir)
         # self.files = [i.split('_')[0] + '_' for i in self.files]
         # self.files = list(set(self.files))
         self.transform = transform
         
     def __len__(self):
-        return len(self.files)
+        return len(self.name_list)
     
     def __getitem__(self, idx):
         
@@ -77,7 +77,7 @@ class Example_dataset(Dataset):
         
         i_s = resize(i_s, to_scale, preserve_range=True)
         
-        sample = (i_s, img_name)
+        sample = (i_s, img_name.split('.')[0])
         
         if self.transform:
             sample = self.transform(sample)

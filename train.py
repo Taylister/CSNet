@@ -5,15 +5,15 @@
 import numpy as np
 import os
 import torch
+import torch.nn as nn
 import torchvision.transforms
 from utils import *
 import cfg
 from tqdm import tqdm
-import torchvision.transforms.functional as F
-from skimage.transform import resize
-from skimage import io
+
 from models import define_G, define_D, GANLoss, get_scheduler, update_learning_rate
 from torchvision import models, transforms, datasets
+import torchvision.transforms.functional as F
 from dataset import CSNet_dataset, Example_dataset, To_tensor
 import torch.optim as optim
 from torch.utils.data import Dataset, DataLoader
@@ -23,7 +23,6 @@ def requires_grad(model, flag=True):
     for p in model.parameters():
         p.requires_grad = flag
         
-
 
 def clip_grad(model):
     
@@ -40,36 +39,49 @@ def main():
     gpu = torch.device('cuda:0')
 
     train_name = get_train_name()
-
+ 
     print('===> Loading datasets')
     train_data = CSNet_dataset(cfg, torp='train')
     train_data = DataLoader(dataset = train_data, batch_size = cfg.batch_size, shuffle = False, collate_fn = custom_collate,  pin_memory = True)
     
-    # trfms = To_tensor()
-    # example_data = Example_dataset(transform = trfms)    
-    # example_loader = DataLoader(dataset = example_data, batch_size = 1, shuffle = False)
+    trfms = To_tensor()
+    example_data = Example_dataset(transform = trfms)    
+    example_loader = DataLoader(dataset = example_data, batch_size = 1, shuffle = False)
 
 
     print('===> Building models')
-    net_g = define_G(3, 1, 64,'batch', False, 'normal', 0.02, gpu_id=gpu)
-    net_d = define_D(3 + 1, 64, 'basic', gpu_id=gpu)
 
+    if cfg.train_ckpt_G_path is None:
+        net_g = define_G(3, 1, 64,'batch', False, 'normal', 0.02, gpu_id=gpu)
+    else:
+        net_g = torch.load(cfg.train_ckpt_G_path).to(gpu)
+    
+    if cfg.train_ckpt_G_path is None:
+        net_d = define_D(3 + 1, 64, 'basic', gpu_id=gpu)
+    else:
+        net_d = torch.load(cfg.train_ckpt_D_path).to(gpu)
+        
     criterionGAN = GANLoss().to(gpu)
     criterionL1 = nn.L1Loss().to(gpu)
     criterionMSE = nn.MSELoss().to(gpu)
 
     # setup optimizer
-    optimizer_g = optim.Adam(net_g.parameters(), lr=cfg.lr, betas=(opt.beta1, 0.999))
-    optimizer_d = optim.Adam(net_d.parameters(), lr=cfg.lr, betas=(opt.beta1, 0.999))
-    net_g_scheduler = get_scheduler(optimizer_g, opt)
-    net_d_scheduler = get_scheduler(optimizer_d, opt)
+    optimizer_g = optim.Adam(net_g.parameters(), lr=cfg.lr, betas=(cfg.beta1, 0.999))
+    optimizer_d = optim.Adam(net_d.parameters(), lr=cfg.lr, betas=(cfg.beta1, 0.999))
+    net_g_scheduler = get_scheduler(optimizer_g, cfg)
+    net_d_scheduler = get_scheduler(optimizer_d, cfg)
 
     # train
-    trainer = iter(train_data)
-    #example_iter = iter(example_loader)
+    for epoch in tqdm(range(1, cfg.niter + cfg.niter_decay + 1)):
+        
+        trainer = iter(train_data)
 
-    for epoch in range(1, cfg.niter + cfg.niter_decay + 1):
+        ######################
+        # Training
+        ######################
         for iteration, batch in enumerate(trainer):
+            net_g.train()
+            torch.set_grad_enabled(True)
             # forward
             input_src, mask_true = batch[0].to(gpu), batch[1].to(gpu)
             mask_false = net_g(input_src)
@@ -109,7 +121,7 @@ def main():
             loss_g_gan = criterionGAN(pred_fake, True)
 
             # Second, G(A) = B
-            loss_g_l1 = criterionL1(mask_false, mask_true) * opt.lamb
+            loss_g_l1 = criterionL1(mask_false, mask_true) * cfg.lamb
             
             loss_g = loss_g_gan + loss_g_l1
             
@@ -118,33 +130,53 @@ def main():
             optimizer_g.step()
 
             print("===> Epoch[{}]({}/{}): Loss_D: {:.4f} Loss_G: {:.4f}".format(
-                epoch, iteration, len(trainiter), loss_d.item(), loss_g.item()))
+                epoch, iteration, len(trainer), loss_d.item(), loss_g.item()))
+            
+            ######################
+            # Save Image 
+            ######################
+            if iteration % cfg.snap_period == 0 or iteration == 0:
+                print(iteration)
+                savedir = os.path.join(cfg.train_result_dir, train_name, "images", str(epoch)+'-'+str(iteration))
+            
+                example_iter = iter(example_loader)
+                net_g.eval()
+                torch.set_grad_enabled(False)
+
+                for ex_iter, batch in enumerate(example_iter):
+            
+                    i_s = batch[0].to(gpu)
+                    name = str(batch[1][0])
+                    
+                    o_mask = net_g(i_s)
+                    o_mask = o_mask.squeeze(0).to('cpu')
+                    
+                    if not os.path.exists(savedir):
+                        os.makedirs(savedir)
+
+                    o_mask = F.to_pil_image(o_mask)
+                    o_mask.save(os.path.join(savedir, name + 'o_mask.png'))
+            
+            ######################
+            # Save Weight 
+            ######################
+            if iteration % cfg.save_ckpt_interval == 0 or iteration == 0:
+
+                savedir = os.path.join(cfg.train_result_dir, train_name, "weight")
+
+                if not os.path.exists(savedir):
+                    os.makedirs(savedir)
+         
+                net_g_model_out_path = savedir + "/netG_model_{}.pth".format(str(epoch)+'-'+str(iteration))
+                net_d_model_out_path = savedir + "/netD_model_{}.pth".format(str(epoch)+'-'+str(iteration))
+                torch.save(net_g, net_g_model_out_path)
+                print(net_g_model_out_path)
+                torch.save(net_d, net_d_model_out_path)
 
         update_learning_rate(net_g_scheduler, optimizer_g)
         update_learning_rate(net_d_scheduler, optimizer_d)
 
-        # # test
-        # avg_psnr = 0
-        # for batch in testing_data_loader:
-        #     input, target = batch[0].to(device), batch[1].to(device)
-
-        #     prediction = net_g(input)
-        #     mse = criterionMSE(prediction, target)
-        #     psnr = 10 * log10(1 / mse.item())
-        #     avg_psnr += psnr
-        # print("===> Avg. PSNR: {:.4f} dB".format(avg_psnr / len(testing_data_loader)))
-
-        # #checkpoint
-        # if epoch % 50 == 0:
-        #     if not os.path.exists("checkpoint"):
-        #         os.mkdir("checkpoint")
-        #     if not os.path.exists(os.path.join("checkpoint", opt.dataset)):
-        #         os.mkdir(os.path.join("checkpoint", opt.dataset))
-        #     net_g_model_out_path = "checkpoint/{}/netG_model_epoch_{}.pth".format(opt.dataset, epoch)
-        #     net_d_model_out_path = "checkpoint/{}/netD_model_epoch_{}.pth".format(opt.dataset, epoch)
-        #     torch.save(net_g, net_g_model_out_path)
-        #     torch.save(net_d, net_d_model_out_path)
-        #     print("Checkpoint saved to {}".format("checkpoint" + opt.dataset))
-
+            
+        
 if __name__ == '__main__':
     main()

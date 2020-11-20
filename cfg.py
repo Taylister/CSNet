@@ -1,39 +1,41 @@
 gpu = 0
 
-lr = 0.0002
-#parser.add_argument('--lr', type=float, default=0.0002, help='initial learning rate for adam')
 lamb = 10
 #parser.add_argument('--lamb', type=int, default=10, help='weight on L1 term in objective')
-
-
-
-
-# train
-learning_rate = 1e-4 
-decay_rate = 0.9
-beta1 = 0.9
-beta2 = 0.999 
-max_iter = 500000
-show_loss_interval = 50
-write_log_interval = 50
-save_ckpt_interval = 1000
-gen_example_interval = 1000
-checkpoint_savedir = 'logs/'
-ckpt_path = '/content/trained_final_5M_.model'
+epoch_count = 1
+# parser.add_argument('--epoch_count', type=int, default=1, help='the starting epoch count')
+niter = 1000
+# parser.add_argument('--niter', type=int, default=100, help='# of iter at starting learning rate')
+niter_decay = 1000
+# parser.add_argument('--niter_decay', type=int, default=100, help='# of iter to linearly decay learning rate to zero')
+lr = 0.0002
+# parser.add_argument('--lr', type=float, default=0.0002, help='initial learning rate for adam')
+lr_policy = "lambda"
+# parser.add_argument('--lr_policy', type=str, default='lambda', help='learning rate policy: lambda|step|plateau|cosine')
+lr_decay_iters = 50
+# parser.add_argument('--lr_decay_iters', type=int, default=50, help='multiply by a gamma every lr_decay_iters iterations')
+beta1 = 0.5
+# parser.add_argument('--beta1', type=float, default=0.5, help='beta1 for adam. default=0.5')
+snap_period = 10000
+save_ckpt_interval = 20000
 
 # data
 batch_size = 8
 data_shape = [64, None]
-data_dir = '/content/srnet_data'
+data_dir = 'datasets/sample'
 
-train_data_dir = 'trian'
+train_data_dir = 'train'
 test_data_dir = 'test'
 
 i_s_dir = 'i_s'
 mask_t_dir = 'mask_t'
-#example_data_dir = 'custom_feed/labels'
-example_data_dir = '/content/srnet_data/test'
-example_result_dir = 'custom_feed/gen_logs'
+
+example_data_dir = 'datasets/sample/train'
+train_result_dir = 'result'
+
+# train
+train_ckpt_G_path = None
+train_ckpt_D_path = None
 
 # predict
 predict_ckpt_path = None
