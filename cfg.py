@@ -39,9 +39,9 @@ train_ckpt_G_path = None
 train_ckpt_D_path = None
 
 # predict
-predict_ckpt_path = None
-predict_data_dir = None
-predict_result_dir = 'custom_feed/result'
+predict_ckpt_path = "result/20201120200122/weight/netD_model_15-0.pth"
+predict_data_dir = 'datasets/sample/train'
+predict_result_dir = 'datasets/sample/train'
 
 # Training settings
 # parser = argparse.ArgumentParser(description='pix2pix-pytorch-implementation')

@@ -1,7 +1,3 @@
-# Training script for the SRNet. Refer README for instructions.
-# author: Niwhskal
-# github : https://github.com/Niwhskal/SRNet
-
 import numpy as np
 import os
 import torch
@@ -56,7 +52,7 @@ def main():
     else:
         net_g = torch.load(cfg.train_ckpt_G_path).to(gpu)
     
-    if cfg.train_ckpt_G_path is None:
+    if cfg.train_ckpt_D_path is None:
         net_d = define_D(3 + 1, 64, 'basic', gpu_id=gpu)
     else:
         net_d = torch.load(cfg.train_ckpt_D_path).to(gpu)

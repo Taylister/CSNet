@@ -53,11 +53,9 @@ class CSNet_dataset(Dataset):
 class Example_dataset(Dataset):
     
     def __init__(self, data_dir = cfg.example_data_dir, transform = None):
-        
-        self.name_list = os.listdir(os.path.join(data_dir, cfg.i_s_dir))
-        # self.files = os.listdir(data_dir)
-        # self.files = [i.split('_')[0] + '_' for i in self.files]
-        # self.files = list(set(self.files))
+
+        self.data_dir = data_dir
+        self.name_list = os.listdir(os.path.join(self.data_dir, cfg.i_s_dir))
         self.transform = transform
         
     def __len__(self):
@@ -67,7 +65,7 @@ class Example_dataset(Dataset):
         
         img_name = self.name_list[idx]
         
-        i_s = io.imread(os.path.join(cfg.example_data_dir, cfg.i_s_dir, img_name))
+        i_s = io.imread(os.path.join(self.data_dir, cfg.i_s_dir, img_name))
         
         h, w = i_s.shape[:2]
         scale_ratio = cfg.data_shape[0] / h
