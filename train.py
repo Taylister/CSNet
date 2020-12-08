@@ -169,9 +169,8 @@ def main():
          
                 net_g_model_out_path = savedir + "/netG_model_{}.pth".format(str(epoch)+'-'+str(iteration))
                 net_d_model_out_path = savedir + "/netD_model_{}.pth".format(str(epoch)+'-'+str(iteration))
-                torch.save(net_g, net_g_model_out_path)
-                print(net_g_model_out_path)
-                torch.save(net_d, net_d_model_out_path)
+                torch.save(net_g.state_dict(), net_g_model_out_path)
+                torch.save(net_d.state_dict(), net_d_model_out_path)
 
         update_learning_rate(net_g_scheduler, optimizer_g)
         update_learning_rate(net_d_scheduler, optimizer_d)

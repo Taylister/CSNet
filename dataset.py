@@ -88,7 +88,7 @@ class To_tensor(object):
         
         i_s, img_name = sample
 
-        i_s = i_s.transpose((2, 0, 1)) /127.5 -1
+        i_s = i_s.transpose((2, 0, 1)) /127.5 - 1
 
         i_s = torch.from_numpy(i_s)
 

@@ -16,7 +16,7 @@ from torch.utils.data import Dataset, DataLoader
 
 
 def main():
-
+    
     print('===> Loading datasets')
  
     trfms = To_tensor()
@@ -26,9 +26,16 @@ def main():
 
     print('===> Loading models')
 
-    net_g = define_G(3, 1, 64,'batch', False, 'normal', 0.02, gpu_id="cpu")
-    net_g.load_state_dict(torch.load(cfg.predict_ckpt_path, map_location='cpu'))
-    
+    if cfg.gpu :
+        gpu = torch.device("cuda:0")
+        net_g = define_G(3, 1, 64,'batch', False, 'normal', 0.02, gpu_id=gpu)
+        net_g.load_state_dict(torch.load(cfg.predict_ckpt_path))
+       
+    else:
+        net_g = define_G(3, 1, 64,'batch', False, 'normal', 0.02, gpu_id='cpu')
+        net_g.load_state_dict(torch.load(cfg.predict_ckpt_path, map_location='cpu'))
+        
+
     savedir = os.path.join(cfg.predict_result_dir, "output")
          
     example_iter = iter(example_loader)
@@ -36,12 +43,20 @@ def main():
     torch.set_grad_enabled(False)
 
     for ex_iter, batch in enumerate(example_iter):
-         
-        i_s = batch[0]
-        name = str(batch[1][0])
-                 
-        o_mask = net_g(i_s)
-        o_mask = o_mask.squeeze(0)
+        
+        if cfg.gpu:
+            i_s = batch[0].to(gpu)
+            name = str(batch[1][0])
+     
+            o_mask = net_g(i_s)
+            o_mask = o_mask.squeeze(0).to('cpu')
+        else:
+            i_s = batch[0]
+            name = str(batch[1][0])
+     
+            o_mask = net_g(i_s)
+            o_mask = o_mask.squeeze(0)
+        
                  
         if not os.path.exists(savedir):
             os.makedirs(savedir)

@@ -4,15 +4,15 @@ lamb = 10
 #parser.add_argument('--lamb', type=int, default=10, help='weight on L1 term in objective')
 epoch_count = 1
 # parser.add_argument('--epoch_count', type=int, default=1, help='the starting epoch count')
-niter = 100
+niter = 25
 # parser.add_argument('--niter', type=int, default=100, help='# of iter at starting learning rate')
-niter_decay = 100
+niter_decay = 25
 # parser.add_argument('--niter_decay', type=int, default=100, help='# of iter to linearly decay learning rate to zero')
 lr = 0.0002
 # parser.add_argument('--lr', type=float, default=0.0002, help='initial learning rate for adam')
 lr_policy = "lambda"
 # parser.add_argument('--lr_policy', type=str, default='lambda', help='learning rate policy: lambda|step|plateau|cosine')
-lr_decay_iters = 50
+lr_decay_iters = 10
 # parser.add_argument('--lr_decay_iters', type=int, default=50, help='multiply by a gamma every lr_decay_iters iterations')
 beta1 = 0.5
 # parser.add_argument('--beta1', type=float, default=0.5, help='beta1 for adam. default=0.5')
@@ -39,10 +39,10 @@ train_ckpt_G_path = None
 train_ckpt_D_path = None
 
 # predict
-predict_ckpt_path = "result/20201120200122/weight/netD_model_15-0.pth"
+predict_ckpt_path = "/home/miyazonotaiga/デスクトップ/MyResearch/CSNet/result/20201208160755/weight/netG_model_4-0.pth"
 predict_data_dir = 'datasets/sample/train'
 predict_result_dir = 'datasets/sample/train'
-
+gpu = False
 # Training settings
 # parser = argparse.ArgumentParser(description='pix2pix-pytorch-implementation')
 # parser.add_argument('--dataset', required=True, help='facades')
