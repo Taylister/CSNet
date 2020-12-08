@@ -3,3 +3,5 @@ SRNet-Datagen/Synthtext/data/texts.txt
 ttfs
 datasets
 result/
+__pycache__
+SRNet-Datagen/__pycache__
